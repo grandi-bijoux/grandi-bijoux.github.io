@@ -3,12 +3,44 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Interaction avec l'IA</title>
+    <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <div class="test">
-      <input type="textarera" id="texteareaApi" />
-    </div>
-    <script src="index.js"></script>
+    <h1>Posez une question à l'IA</h1>
+    <form id="questionForm">
+      <textarea
+        id="questionInput"
+        placeholder="Tapez votre question ici..."
+      ></textarea>
+      <button type="submit">Envoyer</button>
+    </form>
+    <div id="response"></div>
+
+    <script>
+      document
+        .getElementById("questionForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const question = document.getElementById("questionInput").value;
+          const responseDiv = document.getElementById("response");
+
+          try {
+            const res = await fetch("http://localhost:3000/api/ask", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ message: question }),
+            });
+
+            const data = await res.json();
+            responseDiv.innerText = data.response || "Une erreur est survenue.";
+          } catch (error) {
+            console.error("Erreur:", error);
+            responseDiv.innerText = "Erreur de connexion au serveur.";
+          }
+        });
+    </script>
   </body>
 </html>
